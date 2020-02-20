@@ -22,7 +22,7 @@ do
     #mencari nama asli file dari server 
     namafiletemp=$(awk '/Location:/ {print $2}' wgetkocengtemp.log)
     #mengecek apakah nama file baru telah ada di log (seluruh gambar terdownload)
-    cek=$(awk '{$namafiletemp}' wgetkoceng.log)
+    cek=$(awk '{$namafiletemp}' wgetkoceng.log.bak)
     echo $cek
    
     
@@ -38,6 +38,6 @@ do
         mv "pdkt_kusuma_$iter.jpg" "duplicate/duplicate_$(($lastiter + 1)).jpg" 
     fi
     #log akan ditambah log baru
-    cat wgetkocengtemp.log >> wgetkoceng.log
+    cat wgetkocengtemp.log >> wgetkoceng.log.bak
 done
 
