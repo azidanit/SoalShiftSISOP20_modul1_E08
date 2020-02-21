@@ -2,7 +2,8 @@
 # SoalShiftSISOP20_modul1_E08
 
 Penyelesaian Soal Shift Modul 1 SISOP 2020
-
+Achmad Zidan Akbar / 05111840000005
+M RIDHO DAFFA ARDISTA / 05111840000065	
 
 <h3>Nomor 1</h3>
 
