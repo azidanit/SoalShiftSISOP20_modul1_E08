@@ -62,7 +62,7 @@ script dan penjelasan sebagai berikut:
 	split(state, Array, " ")					#split untuk string state dan dipecah dimasukan ke array
 	}								#dengan separator space(" ")
 	{
-	if( $11 == Array[0] || $11 == Array[1] )			#Melakukan pengecekkan pada space untuk "Texas" dan "Illinois"
+	if( $11 == Array[1] || $11 == Array[2] )			#Melakukan pengecekkan pada space untuk "Texas" dan "Illinois"
 	{
 		product[$17]+=$21					#Melakukan penjumlahan nilai product dan disimpan pada array
 		pdt[$17]=product[$17]					#Copy atas :v
@@ -105,6 +105,25 @@ Berikut adalah code untuk **membuat file ter-enkripsi** dengan filename yang dib
 
 	#generate password dengan sha256sum - base64 sepanjang 28 karakter
 	genpass=$(date +%s | sha256sum | base64 | head -c 28)
+	
+	angka='[0-9]'
+	hurufkecil='[a-z]'
+	hurufbesar='[A-Z]'
+
+	echo "genpass $genpass"
+	sudahmemenuhi=0
+
+	while (( $sudahmemenuhi == 0 ))
+	do
+		echo "gen pas $genpass"
+		if [[ "$genpass" =~ $angka && $genpass =~ $hurufkecil && $genpass =~ $hurufbesar ]]; then
+			echo "memenuhi ketentuan"
+			sudahmemenuhi=1
+		else 
+			echo "Belum memenuhi ketentuan rand lagi";
+			genpass=$(date +%s | sha256sum | base64 | head -c 28)
+		fi
+	done
 
 	#mengambil waktu (jam)
 	jam=$(date +%H)
@@ -174,7 +193,6 @@ Scipt yang dapat mendownload gambar dari wget. Serta, dijalankan setiap 8 jam se
 **Script  Download Kocheng :**  beserta penjelasan
 
 	#!bin/bash
-
 	#pindah gambar ke folder kenangan dengan iterasi 28 gambar
 	for ((iter=1; iter<=28; iter=iter+1))
 	do
@@ -195,16 +213,25 @@ Scipt yang dapat mendownload gambar dari wget. Serta, dijalankan setiap 8 jam se
 		$(echo wget --output-document "pdkt_kusuma_$iter.jpg" -o "wgetkocengtemp.log" "https://loremflickr.com/320/240/cat")
 		#mencari nama asli file dari server 
 		namafiletemp=$(awk '/Location:/ {print $2}' wgetkocengtemp.log)
+		# echo $namafiletemp
+		IFS='/' read -ra ADDR <<< "$namafiletemp"
+		# echo ${ADDR[3]}
+		namafiletemp=${ADDR[3]}
 		#mengecek apakah nama file baru telah ada di log (seluruh gambar terdownload)
-		cek=$(awk '{$namafiletemp}' wgetkoceng.log)
-		echo $cek
-	
+		# cek=$(awk -v namafileaa="$namafiletemp" '/namafileaa/ {print}' wgetkoceng.log.bak)
 		
+		cek=$(awk -v koceng="$namafiletemp" '
+		BEGIN{count=0}
+		{if( $0~koceng )count++}
+		END{print count}
+		' wgetkoceng.log.bak)
+		echo $cek
+
 		#cek apakah $cek kosong?
-		if [ ! -z $cek ]
+		if [[ $cek>0 ]]
 		then #apabila ada gambar duplikat maka gambar tsb. dipindah ke folder duplikat
 			#mencari file duplikat terakhir dan mencari gambar duplikat keberapa
-			echo "masuk sini"
+			echo "masuk DUPLICATE"
 			lastfile=$(ls duplicate/ | sort -V | tail -n 1)
 			namalastfile=${lastfile%.*}
 			lastiter=${namalastfile:10}
@@ -212,7 +239,7 @@ Scipt yang dapat mendownload gambar dari wget. Serta, dijalankan setiap 8 jam se
 			mv "pdkt_kusuma_$iter.jpg" "duplicate/duplicate_$(($lastiter + 1)).jpg" 
 		fi
 		#log akan ditambah log baru
-		cat wgetkocengtemp.log >> wgetkoceng.log
+		cat wgetkocengtemp.log >> wgetkoceng.log.bak
 	done
 
 **Sebelum mengeksekusi** pastikan telah membuat folder bernama "duplicate" dan "kenangan" dengan command:
