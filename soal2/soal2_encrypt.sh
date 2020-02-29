@@ -7,6 +7,25 @@ namafile=${file%.*}
 #generate password dengan sha256sum - base64 sepanjang 28 karakter
 genpass=$(date +%s | sha256sum | base64 | head -c 28)
 
+angka='[0-9]'
+hurufkecil='[a-z]'
+hurufbesar='[A-Z]'
+
+echo "genpass $genpass"
+sudahmemenuhi=0
+
+while (( $sudahmemenuhi == 0 ))
+do
+	echo "gen pas $genpass"
+	if [[ "$genpass" =~ $angka && $genpass =~ $hurufkecil && $genpass =~ $hurufbesar ]]; then
+		echo "memenuhi ketentuan"
+		sudahmemenuhi=1
+	else 
+		echo "Belum memenuhi ketentuan rand lagi";
+		genpass=$(date +%s | sha256sum | base64 | head -c 28)
+	fi
+done
+
 #mengambil waktu (jam)
 jam=$(date +%H)
 

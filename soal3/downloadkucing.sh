@@ -1,6 +1,4 @@
 #!bin/bash
-
-
 #pindah gambar ke folder kenangan dengan iterasi 28 gambar
 for ((iter=1; iter<=28; iter=iter+1))
 do
@@ -21,16 +19,25 @@ do
     $(echo wget --output-document "pdkt_kusuma_$iter.jpg" -o "wgetkocengtemp.log" "https://loremflickr.com/320/240/cat")
     #mencari nama asli file dari server 
     namafiletemp=$(awk '/Location:/ {print $2}' wgetkocengtemp.log)
+    # echo $namafiletemp
+	IFS='/' read -ra ADDR <<< "$namafiletemp"
+	# echo ${ADDR[3]}
+    namafiletemp=${ADDR[3]}
     #mengecek apakah nama file baru telah ada di log (seluruh gambar terdownload)
-    cek=$(awk '{$namafiletemp}' wgetkoceng.log.bak)
-    echo $cek
-   
+    # cek=$(awk -v namafileaa="$namafiletemp" '/namafileaa/ {print}' wgetkoceng.log.bak)
     
+    cek=$(awk -v koceng="$namafiletemp" '
+    BEGIN{count=0}
+    {if( $0~koceng )count++}
+    END{print count}
+    ' wgetkoceng.log.bak)
+    echo $cek
+
     #cek apakah $cek kosong?
-    if [ ! -z $cek ]
+    if [[ $cek>0 ]]
     then #apabila ada gambar duplikat maka gambar tsb. dipindah ke folder duplikat
         #mencari file duplikat terakhir dan mencari gambar duplikat keberapa
-        echo "masuk sini"
+        echo "masuk DUPLICATE"
         lastfile=$(ls duplicate/ | sort -V | tail -n 1)
         namalastfile=${lastfile%.*}
         lastiter=${namalastfile:10}

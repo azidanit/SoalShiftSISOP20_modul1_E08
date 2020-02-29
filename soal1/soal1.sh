@@ -1,13 +1,13 @@
 #!/bin/bash
 #Menggunakan FieldSeparator TAB
-Region=$(awk -F"\t" '	
+Region=$(awk -F"\t" '
 {
 	#Penjumlahan profit region dan disimpan pada array
-	Array[$13]+=$21		
+	Array[$13]+=$21
 }
 END{
 	#Mengambil salah satu nilai untuk dibandingkan
-min=Array[$13]			
+min=Array[$13]
 for (i in Array) if( Array[i] != 0 && min >= Array[i])  #Mencari nilai terkecil
 {
 	min=Array[i]		#Memasukkan nilai terkecil
@@ -47,13 +47,15 @@ echo -e "1.b\n2 state profit paling sedikit dari 1.a =" $State	#Menampilkan jawa
 
 awk -F"\t" -v state="$State" '					#Mengambil variable state dari awk sebelumnya
 BEGIN{
-split(state, Array, " ")					#split untuk string state dan dipecah dimasukan ke array
+split(state, Array, " ")
+					#split untuk string state dan dipecah dimasukan ke array
 }								#dengan separator space(" ")
 {
-if( $11 == Array[0] || $11 == Array[1] )			#Melakukan pengecekkan pada space untuk "Texas" dan "Illinois"
+if( $11 == Array[1] || $11 == Array[2] )			#Melakukan pengecekkan pada space untuk "Texas" dan "Illinois"
 {
 	product[$17]+=$21					#Melakukan penjumlahan nilai product dan disimpan pada array
-	pdt[$17]=product[$17]					#Copy atas :v
+	pdt[$17]=product[$17]
+					#Copy atas :v
 }
 }
 END{
@@ -65,7 +67,7 @@ for(t=1; t<=10; t++)						#Melakukan perulangan untuk mencari 10 product yang pa
 	{
 		if( product[t] == pdt[k] )			#Pengecekkan hasil sort dengan nama product
 		{
-		print t, k					#Menampilkan Product yang paling tidak profit mulai dari yang terendah
+		print t, k, product[t]					#Menampilkan Product yang paling tidak profit mulai dari yang terendah
 		}
 	}
 }
